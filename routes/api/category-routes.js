@@ -6,10 +6,16 @@ const { Category, Product } = require('../../models');
 router.get('/', (req, res) => {
   // find all categories
   // be sure to include its associated Products
-  Category.findAll().then((data) => {
-    res.json(data);
-  });
-
+  Category.findAll({
+    include:{
+        model: Product,
+        attributes: ['id', 'product_name', 'price', 'category_id']
+    }
+  })
+  .then((categoryData) => {
+    res.json(categoryData);
+  })
+  .catch((err) => res.json(err));
 });
 
 router.get('/:id', (req, res) => {
@@ -21,10 +27,16 @@ router.get('/:id', (req, res) => {
      where: { 
           id: req.params.id
         },
+        include:{
+          model: Product,
+          attributes: ['id', 'product_name', 'price', 'category_id']
       }
-    ).then((data) => {
-      res.json(data);
-    });
+
+      }
+    ).then((categoryData) => {
+      res.json(categoryData);
+    })
+    .catch((err) => res.json(err));
   });
 
 
@@ -52,9 +64,9 @@ router.put('/:id', (req, res) => {
       },
     }
   )
-    .then((updatedBook) => {
+    .then((updatedCategory) => {
       // Sends the updated book as a json response
-      res.json(updatedBook);
+      res.json(updatedCategory);
     })
     .catch((err) => res.json(err));
 });
